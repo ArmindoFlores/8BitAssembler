@@ -1,0 +1,8 @@
+.main ; main function, loops indefinetly
+call .add_func
+jmp .main
+
+.add_func ; add function
+mov $323, 1
+add $323, %10
+ret
