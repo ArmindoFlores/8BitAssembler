@@ -1,9 +1,0 @@
-.add_func ; add function
-mov $250, 1
-mov $250, %2
-ret
-
-.main ; main function, loops indefinetly
-call .add_func
-pop %10
-jmp .main
