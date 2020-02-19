@@ -1,7 +1,12 @@
 #include "io.h"
 #include <fstream>
+#include <iostream>
 
 namespace io {
+	void log(string message) {
+		cout << message << endl;
+	}
+
 	bool writeToFile(string filename, list<uint8_t> *byteCode) {
 		fstream file;
 		file.open(filename, ios::binary | ios::out | ios::trunc);
@@ -36,4 +41,6 @@ namespace io {
 			return "";
 		}
 	}
+
+
 }

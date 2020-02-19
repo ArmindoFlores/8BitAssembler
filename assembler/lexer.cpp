@@ -103,18 +103,12 @@ namespace lexer {
 	}
 
 	bool addToken(string token, vector<Token> *tokenList, int line, int chr) {
-		// Check if the token is a keyword
 		Token t = getKeyWord(token);
 		if (t.type != ERROR) {
 			t.line = line;
 			tokenList->push_back(t);
 			return true;
-		} // If not, check if it is a label
-		else if (token[0] == '.') {
-			t = Token(LABEL, line, chr, -1, token.substr(1));
-			tokenList->push_back(t);
-			return true;
-		} // Else, check if it's a number / register / address
+		}
 		else if (token[0] == '$') {
 			t = Token(ADDR, line, chr, atoi(token.substr(1).c_str()));
 			tokenList->push_back(t);
@@ -137,7 +131,9 @@ namespace lexer {
 			return true;
 		}
 		else {
-			return false;
+			t = Token(LABELCALL, line, chr, -1, token);
+			tokenList->push_back(t);
+			return true;
 		}
 	}
 
@@ -165,6 +161,10 @@ namespace lexer {
 						chr = 0;
 						comment = false;
 					}
+					buffer = "";
+				}
+				else if (source[i] == ':' && !comment) {
+					tokens.push_back(Token(LABELDEF, line, chr, -1, buffer));
 					buffer = "";
 				}
 				else if (source[i] == ',' && !comment) {

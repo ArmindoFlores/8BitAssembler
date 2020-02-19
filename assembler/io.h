@@ -10,6 +10,7 @@ namespace io {
 
 	string getFileContent(string filename);
 	bool writeToFile(string filename, list<uint8_t> *byteCode);
+	void log(string message);
 
 }
 

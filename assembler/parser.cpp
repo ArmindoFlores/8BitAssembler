@@ -186,17 +186,32 @@ namespace parser {
 		bool expectSep = false;
 
 		try {
+			// First iterate through every token and process labels
 			for (int i = 0; i < tokens->size(); i++) {
 				t = tokens->at(i);
+				if (t.type == lexer::LABELDEF) {
+					if (t.sdata != "") {
+						labels[t.sdata] = addr + 1;
+					}
+				}
+				else if (t.type != lexer::SEP) {
+					addr++;
+				}
+			}
 
+			addr = 0;
+
+			// And then decode every other token
+			for (int i = 0; i < tokens->size(); i++) {
+				t = tokens->at(i);
 				if (mode == lexer::KEYWORD) {
-					if (t.type == lexer::LABEL) {
-						if (t.sdata != "") {
-							labels[t.sdata] = addr+1;
-						}
-						else {
+					if (t.type == lexer::LABELDEF) {
+						if (t.sdata == "") {
 							throw asmExceptions::blankLabelException();
 						}
+					}
+					else if (t.type == lexer::LABELCALL) {
+						throw asmExceptions::misplacedTokenException();
 					}
 					else if (isKeyWord(t)) {
 						addr++;
@@ -256,7 +271,7 @@ namespace parser {
 							operandCount--;
 							addr++;
 						}
-						else if (t.type == lexer::LABEL && !expectSep) {
+						else if (t.type == lexer::LABELCALL && !expectSep) {
 							int index = getOperands(keyword) - operandCount;
 							operands[index] = labels[t.sdata];
 							operandType[index] = lexer::ADDR;
